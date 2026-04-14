@@ -71,7 +71,7 @@ export default function ProductForm() {
     setValue,
     reset,
     control,
-    watch,
+    // watch,
     formState: { errors },
   } = useForm<ProductFormData>({
     defaultValues: {
