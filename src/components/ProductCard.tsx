@@ -19,7 +19,7 @@ export default function ProductCard({ product, onDelete }: ProductCardProps) {
           alt={product.title}
           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent opacity-60" />
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent opacity-60 pointer-events-none" />
       </div>
 
       {/* Content */}
@@ -57,7 +57,7 @@ export default function ProductCard({ product, onDelete }: ProductCardProps) {
           <button
             id={`details-btn-${product.id}`}
             onClick={() => navigate(`/product/${product.id}`)}
-            className="flex-1 flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 text-white p-3 rounded-xl transition-colors text-sm font-semibold cursor-pointer"
+            className="flex-1 flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 hover:cursor-pointer text-white p-3 rounded-xl transition-colors text-sm font-semibold cursor-pointer"
           >
             <ExternalLink size={16} />
             Details
