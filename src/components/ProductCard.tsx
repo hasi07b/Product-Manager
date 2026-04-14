@@ -23,9 +23,9 @@ export default function ProductCard({ product, onDelete }: ProductCardProps) {
       </div>
 
       {/* Content */}
-      <div className="p-6">
+      <div className="p-4 sm:p-6">
         <div className="flex justify-between items-start mb-2">
-          <h3 className="text-xl font-bold line-clamp-1 group-hover:text-blue-400 transition-colors">
+          <h3 className="text-base sm:text-xl font-bold line-clamp-1 group-hover:text-blue-400 transition-colors">
             {product.title}
           </h3>
           <span className="bg-blue-500/10 text-blue-400 text-xs font-bold px-2 py-1 rounded-full border border-blue-500/20 shrink-0 ml-2">

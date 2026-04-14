@@ -42,11 +42,11 @@ export default function Home() {
 
   return (
     <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
-      <header className="mb-16 text-center">
-        <h1 className="text-4xl md:text-6xl font-black mb-6 bg-gradient-to-b from-white to-slate-500 bg-clip-text text-transparent leading-tight">
+      <header className="mb-8 md:mb-16 text-center px-2">
+        <h1 className="text-3xl sm:text-4xl md:text-6xl font-black mb-4 md:mb-6 bg-gradient-to-b from-white to-slate-500 bg-clip-text text-transparent leading-tight">
           Manage Your Inventory <br /> With Precision
         </h1>
-        <p className="text-slate-400 max-w-xl mx-auto text-lg leading-relaxed">
+        <p className="text-slate-400 max-w-xl mx-auto text-base sm:text-lg leading-relaxed">
           High-performance dashboard for tracking, editing, and managing your product catalog.
         </p>
       </header>

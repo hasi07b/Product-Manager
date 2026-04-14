@@ -91,22 +91,22 @@ export default function ProductDetails() {
 
   return (
     <div className="animate-in fade-in slide-in-from-left-4 duration-500">
-      {/* Back + Action Buttons Row */}
-      <div className="flex items-center justify-between mb-8">
+      {/* Back + Action Buttons Row — stacks on mobile */}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-6 sm:mb-8">
         <button
           id="back-btn"
           onClick={() => navigate(-1)}
-          className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors group cursor-pointer"
+          className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors group cursor-pointer self-start"
         >
           <ChevronLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
           Back to Inventory
         </button>
 
-        <div className="flex gap-3">
+        <div className="flex gap-2 sm:gap-3">
           <button
             id={`detail-edit-btn-${product.id}`}
             onClick={() => navigate(`/edit/${product.id}`)}
-            className="flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-blue-600/20 hover:text-blue-400 text-slate-300 rounded-xl transition-all cursor-pointer text-sm font-semibold"
+            className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-3 sm:px-4 py-2 bg-slate-800 hover:bg-blue-600/20 hover:text-blue-400 text-slate-300 rounded-xl transition-all cursor-pointer text-sm font-semibold"
           >
             <Edit2 size={16} />
             Edit
@@ -114,7 +114,7 @@ export default function ProductDetails() {
           <button
             id={`detail-delete-btn-${product.id}`}
             onClick={handleDelete}
-            className="flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-red-600/20 hover:text-red-400 text-slate-300 rounded-xl transition-all cursor-pointer text-sm font-semibold"
+            className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-3 sm:px-4 py-2 bg-slate-800 hover:bg-red-600/20 hover:text-red-400 text-slate-300 rounded-xl transition-all cursor-pointer text-sm font-semibold"
           >
             <Trash2 size={16} />
             Delete
@@ -152,16 +152,16 @@ export default function ProductDetails() {
 
         {/* ── Product Info ─────────────────────────────────────────────── */}
         <div className="flex flex-col">
-          <div className="mb-6">
-            <span className="inline-block px-3 py-1 bg-blue-500/10 text-blue-400 text-sm font-bold rounded-full border border-blue-500/20 mb-4 uppercase tracking-wider">
+          <div className="mb-4 sm:mb-6">
+            <span className="inline-block px-3 py-1 bg-blue-500/10 text-blue-400 text-sm font-bold rounded-full border border-blue-500/20 mb-3 sm:mb-4 uppercase tracking-wider">
               {product.category}
             </span>
-            <h1 className="text-4xl md:text-5xl font-black mb-4 leading-tight">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-black mb-3 sm:mb-4 leading-tight">
               {product.title}
             </h1>
-            <div className="flex items-center gap-4 text-slate-400">
+            <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-slate-400 text-sm sm:text-base">
               <div className="flex items-center gap-1">
-                <Star size={18} className="text-yellow-500 fill-yellow-500" />
+                <Star size={16} className="text-yellow-500 fill-yellow-500" />
                 <span className="text-white font-bold">{product.rating}</span>
               </div>
               <span>•</span>
@@ -177,9 +177,9 @@ export default function ProductDetails() {
             </div>
           </div>
 
-          <div className="text-4xl font-black mb-8 flex items-baseline gap-2">
+          <div className="text-3xl sm:text-4xl font-black mb-6 sm:mb-8 flex flex-wrap items-baseline gap-2">
             ${product.price}
-            <span className="text-lg text-slate-500 line-through font-normal">
+            <span className="text-base sm:text-lg text-slate-500 line-through font-normal">
               ${(product.price * (1 + product.discountPercentage / 100)).toFixed(2)}
             </span>
             <span className="text-sm text-green-400 font-semibold ml-1">
@@ -191,16 +191,16 @@ export default function ProductDetails() {
             {product.description}
           </p>
 
-          <div className="grid grid-cols-2 gap-4 mb-10">
-            <div className="p-4 bg-white/5 rounded-2xl border border-white/5 flex items-center gap-4">
-              <ShieldCheck className="text-blue-400" size={24} />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-8 sm:mb-10">
+            <div className="p-3 sm:p-4 bg-white/5 rounded-2xl border border-white/5 flex items-center gap-3 sm:gap-4">
+              <ShieldCheck className="text-blue-400 shrink-0" size={22} />
               <div>
                 <div className="text-sm font-bold">1 Year Warranty</div>
                 <div className="text-xs text-slate-500">Official Brand Warranty</div>
               </div>
             </div>
-            <div className="p-4 bg-white/5 rounded-2xl border border-white/5 flex items-center gap-4">
-              <Truck className="text-blue-400" size={24} />
+            <div className="p-3 sm:p-4 bg-white/5 rounded-2xl border border-white/5 flex items-center gap-3 sm:gap-4">
+              <Truck className="text-blue-400 shrink-0" size={22} />
               <div>
                 <div className="text-sm font-bold">Free Delivery</div>
                 <div className="text-xs text-slate-500">On all orders above $100</div>

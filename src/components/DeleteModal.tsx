@@ -19,7 +19,7 @@ export default function DeleteModal({ isOpen, onClose, onConfirm, productName }:
       />
 
       {/* Modal */}
-      <div className="relative bg-slate-900 border border-white/10 w-full max-w-md rounded-3xl p-8 shadow-2xl animate-in zoom-in-95 duration-200">
+      <div className="relative bg-slate-900 border border-white/10 w-full max-w-md rounded-2xl sm:rounded-3xl p-6 sm:p-8 shadow-2xl animate-in zoom-in-95 duration-200">
         <button
           id="modal-close-btn"
           onClick={onClose}

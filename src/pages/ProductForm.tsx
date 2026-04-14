@@ -162,7 +162,7 @@ export default function ProductForm() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto animate-in fade-in zoom-in-95 duration-500 pb-20">
+    <div className="max-w-4xl mx-auto animate-in fade-in zoom-in-95 duration-500 pb-16 sm:pb-20">
       {/* Back Button */}
       <button
         type="button"
@@ -173,11 +173,11 @@ export default function ProductForm() {
         Back to Inventory
       </button>
 
-      <div className="mb-12 text-center">
-        <h1 className="text-4xl md:text-5xl font-black mb-4 bg-gradient-to-r from-white to-slate-500 bg-clip-text text-transparent">
+      <div className="mb-8 sm:mb-12 text-center">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-black mb-3 sm:mb-4 bg-gradient-to-r from-white to-slate-500 bg-clip-text text-transparent">
           {isEditMode ? 'Edit Product' : 'Add New Product'}
         </h1>
-        <p className="text-slate-400 text-lg">
+        <p className="text-slate-400 text-base sm:text-lg">
           {isEditMode
             ? 'Refine your inventory with precision and style.'
             : 'Expand your catalog with a new premium item.'}
@@ -186,7 +186,7 @@ export default function ProductForm() {
 
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="space-y-10 bg-slate-900/40 border border-white/5 p-8 md:p-12 rounded-[3rem] backdrop-blur-2xl shadow-2xl relative overflow-hidden"
+        className="space-y-8 sm:space-y-10 bg-slate-900/40 border border-white/5 p-5 sm:p-8 md:p-12 rounded-[2rem] sm:rounded-[3rem] backdrop-blur-2xl shadow-2xl relative overflow-hidden"
       >
         {/* Decorative blobs */}
         <div className="absolute -top-24 -right-24 w-64 h-64 bg-blue-600/10 blur-[100px] rounded-full pointer-events-none" />
