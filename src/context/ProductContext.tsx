@@ -1,17 +1,18 @@
 import React, { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
+import { productApi } from '../lib/api';
 
 export interface Product {
   id: number;
   title: string;
   description: string;
   price: number;
+  category: string;
+  thumbnail: string;
+  images: string[];
   discountPercentage: number;
   rating: number;
   stock: number;
   brand: string;
-  category: string;
-  thumbnail: string;
-  images: string[];
 }
 
 interface ProductContextType {
@@ -22,8 +23,8 @@ interface ProductContextType {
   filteredProducts: Product[];
   setSearchTerm: (term: string) => void;
   fetchProducts: () => Promise<void>;
-  addProduct: (product: Partial<Product>) => Promise<void>;
-  updateProduct: (id: number, updatedData: Partial<Product>) => Promise<void>;
+  addProduct: (product: any) => Promise<void>;
+  updateProduct: (id: number, updatedData: any) => Promise<void>;
   deleteProduct: (id: number) => Promise<void>;
 }
 
@@ -43,85 +44,62 @@ export const ProductProvider: React.FC<{ children: ReactNode }> = ({ children })
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>('');
 
+  // 1. Fetch Products
   const fetchProducts = async () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch('https://dummyjson.com/products');
-      const data = await response.json();
-      setProducts(data.products);
+      const response = await productApi.getAll();
+      // Our backend returns the array directly
+      setProducts(response.data);
     } catch (err) {
-      setError('Failed to fetch products');
+      setError('Failed to load products from server.');
       console.error(err);
     } finally {
       setLoading(false);
     }
   };
 
-  const addProduct = async (product: Partial<Product>) => {
+  // 2. Add Product
+  const addProduct = async (productData: any) => {
     setLoading(true);
     try {
-      const response = await fetch('https://dummyjson.com/products/add', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(product),
-      });
-      const data = await response.json();
-      // DummyJSON returns a new product with an ID (usually 195), 
-      // but since it's a mock API, we should make the ID unique locally 
-      // if it conflicts or if we add multiple.
-      const newProduct = {
-        ...data,
-        id: Date.now(), // Ensure local uniqueness
-        images: product.images || [product.thumbnail || ''], // Ensure images array exists
-        rating: 0,
-        stock: 10,
-        brand: 'Generic'
-      };
+      const response = await productApi.create(productData);
+      const newProduct = response.data;
+      // Update UI without refreshing page
       setProducts((prev) => [newProduct, ...prev]);
     } catch (err) {
       setError('Failed to add product');
+      throw err;
     } finally {
       setLoading(false);
     }
   };
 
-  const updateProduct = async (id: number, updatedData: Partial<Product>) => {
+  // 3. Update Product
+  const updateProduct = async (id: number, updatedData: any) => {
     setLoading(true);
     try {
-      // DummyJSON only allows updating products with ID <= 100
-      let data = updatedData;
-      if (id <= 100) {
-        const response = await fetch(`https://dummyjson.com/products/${id}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(updatedData),
-        });
-        if (response.ok) {
-          data = await response.json();
-        }
-      }
-      
+      const response = await productApi.update(id, updatedData);
+      const updatedProduct = response.data;
+      // Reflect changes instantly in UI
       setProducts((prev) =>
-        prev.map((p) => (p.id === id ? { ...p, ...data, images: p.images || [data.thumbnail || ''] } : p))
+        prev.map((p) => (p.id === id ? updatedProduct : p))
       );
     } catch (err) {
       setError('Failed to update product');
+      throw err;
     } finally {
       setLoading(false);
     }
   };
 
+  // 4. Delete Product
   const deleteProduct = async (id: number) => {
     setLoading(true);
     try {
-      // Try to call API only for products that exist on server
-      if (id <= 100) {
-        await fetch(`https://dummyjson.com/products/${id}`, {
-          method: 'DELETE',
-        });
-      }
-      // Always remove from local state
+      await productApi.delete(id);
+      // Remove product from UI immediately
       setProducts((prev) => prev.filter((p) => p.id !== id));
     } catch (err) {
       setError('Failed to delete product');
@@ -134,6 +112,7 @@ export const ProductProvider: React.FC<{ children: ReactNode }> = ({ children })
     fetchProducts();
   }, []);
 
+  // Simple search filter
   const filteredProducts = products.filter((product) =>
     product.title.toLowerCase().includes(searchTerm.toLowerCase())
   );

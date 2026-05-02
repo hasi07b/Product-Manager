@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { useProducts } from '../context/ProductContext';
 import type { Product } from '../context/ProductContext';
+import { productApi } from '../lib/api';
 
 export default function ProductDetails() {
   const { id } = useParams<{ id: string }>();
@@ -29,29 +30,20 @@ export default function ProductDetails() {
       return;
     }
 
-    // ── Strategy 2: if context is still loading, wait ───────────────────
-    if (contextLoading) return; // effect re-runs when products fills up
-
-    // ── Strategy 3: products loaded but not found locally ───────────────
-    // Only fetch from API for original DummyJSON IDs (≤ 194)
-    if (numId <= 194) {
-      setLoading(true);
-      fetch(`https://dummyjson.com/products/${numId}`)
-        .then((r) => {
-          if (!r.ok) throw new Error('Product not found');
-          return r.json();
-        })
-        .then((data: Product) => {
-          setProduct(data);
-          setActiveImage(data.thumbnail);
-        })
-        .catch((err) => setError(err.message))
-        .finally(() => setLoading(false));
-    } else {
-      // Locally-created product (ID > 194) — not on the server
-      setError('Product not found. It may have been deleted.');
-      setLoading(false);
-    }
+    // ── Strategy 2: if not in local state, fetch from backend ────────────
+    setLoading(true);
+    productApi.getById(numId)
+      .then((response) => {
+        const data = response.data;
+        setProduct(data);
+        setActiveImage(data.thumbnail);
+        setError(null);
+      })
+      .catch((err) => {
+        console.error(err);
+        setError('Product not found on server.');
+      })
+      .finally(() => setLoading(false));
   }, [id, products, contextLoading]);
 
   // ── Handle delete from detail page ────────────────────────────────────

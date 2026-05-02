@@ -6,6 +6,7 @@ import {
   Save, X, Package, DollarSign, Tag, Info, Loader2,
   Image as ImageIcon, Upload, ChevronLeft
 } from 'lucide-react';
+import { productApi } from '../lib/api';
 import {
   Select,
   SelectContent,
@@ -87,7 +88,7 @@ export default function ProductForm() {
   useEffect(() => {
     if (!isEditMode || !id) return;
 
-    // Wait until products array is populated (either from API or already in state)
+    // Wait until products array is populated
     if (products.length === 0 && contextLoading) return;
 
     const existingProduct = products.find((p) => p.id === parseInt(id));
@@ -103,26 +104,22 @@ export default function ProductForm() {
       setServerError(null);
       setProductLoaded(true);
     } else if (!contextLoading && !existingProduct && !productLoaded) {
-      // Products loaded but this ID not found — try fetching from API for IDs ≤ 100
+      // If not in context, try fetching from server
       const numId = parseInt(id);
-      if (numId <= 100) {
-        fetch(`https://dummyjson.com/products/${numId}`)
-          .then((r) => r.json())
-          .then((data) => {
-            reset({
-              title: data.title,
-              price: data.price,
-              category: data.category,
-              description: data.description,
-              thumbnail: data.thumbnail,
-            });
-            setPreviewImage(data.thumbnail);
-            setProductLoaded(true);
-          })
-          .catch(() => setServerError('Product not found.'));
-      } else {
-        setServerError('Product not found.');
-      }
+      productApi.getById(numId)
+        .then((response) => {
+          const data = response.data;
+          reset({
+            title: data.title,
+            price: data.price,
+            category: data.category,
+            description: data.description,
+            thumbnail: data.thumbnail,
+          });
+          setPreviewImage(data.thumbnail);
+          setProductLoaded(true);
+        })
+        .catch(() => setServerError('Product not found on server.'));
     }
   }, [id, isEditMode, products, reset, contextLoading, productLoaded]);
 
