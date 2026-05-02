@@ -1,18 +1,20 @@
 import React, { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
-import { productApi } from '../lib/api';
+import { productApi, authApi } from '../lib/api';
 
 export interface Product {
-  id: number;
+  _id: string;
   title: string;
   description: string;
   price: number;
   category: string;
   thumbnail: string;
-  images: string[];
-  discountPercentage: number;
-  rating: number;
-  stock: number;
-  brand: string;
+  createdAt: string;
+}
+
+export interface User {
+  id: string;
+  name: string;
+  email: string;
 }
 
 interface ProductContextType {
@@ -21,11 +23,16 @@ interface ProductContextType {
   error: string | null;
   searchTerm: string;
   filteredProducts: Product[];
+  user: User | null;
+  isAuthenticated: boolean;
   setSearchTerm: (term: string) => void;
   fetchProducts: () => Promise<void>;
   addProduct: (product: any) => Promise<void>;
-  updateProduct: (id: number, updatedData: any) => Promise<void>;
-  deleteProduct: (id: number) => Promise<void>;
+  updateProduct: (id: string, updatedData: any) => Promise<void>;
+  deleteProduct: (id: string) => Promise<void>;
+  login: (credentials: any) => Promise<void>;
+  register: (userData: any) => Promise<void>;
+  logout: () => void;
 }
 
 const ProductContext = createContext<ProductContextType | undefined>(undefined);
@@ -43,15 +50,59 @@ export const ProductProvider: React.FC<{ children: ReactNode }> = ({ children })
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>('');
+  const [user, setUser] = useState<User | null>(null);
 
-  // 1. Fetch Products
+  const isAuthenticated = !!user;
+
+  // 1. Auth Actions
+  const login = async (credentials: any) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await authApi.login(credentials);
+      const { token, user } = response.data;
+      localStorage.setItem('token', token);
+      localStorage.setItem('user', JSON.stringify(user));
+      setUser(user);
+    } catch (err: any) {
+      setError(err.response?.data?.message || 'Login failed');
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const register = async (userData: any) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await authApi.register(userData);
+      const { token, user } = response.data;
+      localStorage.setItem('token', token);
+      localStorage.setItem('user', JSON.stringify(user));
+      setUser(user);
+    } catch (err: any) {
+      setError(err.response?.data?.message || 'Registration failed');
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const logout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    setUser(null);
+  };
+
+  // 2. Fetch Products
   const fetchProducts = async () => {
     setLoading(true);
     setError(null);
     try {
+      // Fetch all for frontend search/pagination as requested
       const response = await productApi.getAll();
-      // Our backend returns the array directly
-      setProducts(response.data);
+      setProducts(response.data.products || response.data); // Handle both formats
     } catch (err) {
       setError('Failed to load products from server.');
       console.error(err);
@@ -60,13 +111,12 @@ export const ProductProvider: React.FC<{ children: ReactNode }> = ({ children })
     }
   };
 
-  // 2. Add Product
+  // 3. Add Product
   const addProduct = async (productData: any) => {
     setLoading(true);
     try {
       const response = await productApi.create(productData);
       const newProduct = response.data;
-      // Update UI without refreshing page
       setProducts((prev) => [newProduct, ...prev]);
     } catch (err) {
       setError('Failed to add product');
@@ -76,15 +126,14 @@ export const ProductProvider: React.FC<{ children: ReactNode }> = ({ children })
     }
   };
 
-  // 3. Update Product
-  const updateProduct = async (id: number, updatedData: any) => {
+  // 4. Update Product
+  const updateProduct = async (id: string, updatedData: any) => {
     setLoading(true);
     try {
       const response = await productApi.update(id, updatedData);
       const updatedProduct = response.data;
-      // Reflect changes instantly in UI
       setProducts((prev) =>
-        prev.map((p) => (p.id === id ? updatedProduct : p))
+        prev.map((p) => (p._id === id ? updatedProduct : p))
       );
     } catch (err) {
       setError('Failed to update product');
@@ -94,13 +143,12 @@ export const ProductProvider: React.FC<{ children: ReactNode }> = ({ children })
     }
   };
 
-  // 4. Delete Product
-  const deleteProduct = async (id: number) => {
+  // 5. Delete Product
+  const deleteProduct = async (id: string) => {
     setLoading(true);
     try {
       await productApi.delete(id);
-      // Remove product from UI immediately
-      setProducts((prev) => prev.filter((p) => p.id !== id));
+      setProducts((prev) => prev.filter((p) => p._id !== id));
     } catch (err) {
       setError('Failed to delete product');
     } finally {
@@ -108,14 +156,19 @@ export const ProductProvider: React.FC<{ children: ReactNode }> = ({ children })
     }
   };
 
+  // Frontend Search Filtering
+  const filteredProducts = products.filter((product) =>
+    product.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    product.category.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   useEffect(() => {
+    const savedUser = localStorage.getItem('user');
+    if (savedUser) {
+      setUser(JSON.parse(savedUser));
+    }
     fetchProducts();
   }, []);
-
-  // Simple search filter
-  const filteredProducts = products.filter((product) =>
-    product.title.toLowerCase().includes(searchTerm.toLowerCase())
-  );
 
   return (
     <ProductContext.Provider
@@ -125,11 +178,16 @@ export const ProductProvider: React.FC<{ children: ReactNode }> = ({ children })
         error,
         searchTerm,
         filteredProducts,
+        user,
+        isAuthenticated,
         setSearchTerm,
         fetchProducts,
         addProduct,
         updateProduct,
         deleteProduct,
+        login,
+        register,
+        logout,
       }}
     >
       {children}
