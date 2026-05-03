@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Create a reusable Axios instance with base configuration
 const api = axios.create({
-  baseURL: 'https://product-manager-ha9n.vercel.app/',
+  baseURL: 'https://product-manager-ha9n.vercel.app/api',
   headers: {
     'Content-Type': 'application/json',
   },
