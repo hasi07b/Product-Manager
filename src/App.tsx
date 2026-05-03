@@ -11,7 +11,7 @@ import { Toaster } from './components/ui/Toaster';
 // Simple wrapper to protect routes
 const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
   const { isAuthenticated } = useProducts();
-  return isAuthenticated ? <>{children}</> : <Navigate to="/register" />;
+  return isAuthenticated ? <>{children}</> : <Navigate to="/login" />;
 };
 
 const AuthRoute = ({ children }: { children: React.ReactNode }) => {

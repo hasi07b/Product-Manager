@@ -23,6 +23,7 @@ export default function Home() {
   const { filteredProducts, loading, error, deleteProduct } = useProducts();
   const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [isDeleting, setIsDeleting] = useState(false);
   const { toast } = useToast();
 
   // Reset to page 1 when search results change
@@ -41,6 +42,7 @@ export default function Home() {
 
   const confirmDelete = async () => {
     if (selectedProductId) {
+      setIsDeleting(true);
       try {
         await deleteProduct(selectedProductId);
         toast({
@@ -55,6 +57,7 @@ export default function Home() {
           variant: "destructive",
         });
       } finally {
+        setIsDeleting(false);
         setSelectedProductId(null);
       }
     }
@@ -79,9 +82,9 @@ export default function Home() {
 
   return (
     <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
-      <header className="mb-12 md:mb-20 text-center px-4">
-        <h1 className="text-4xl sm:text-5xl md:text-7xl font-black mb-6 bg-gradient-to-b from-white to-slate-500 bg-clip-text text-transparent leading-tight tracking-tight">
-          Inventory <span className="text-blue-500">Control</span> <br className="hidden md:block" /> Center
+      <header className="mb-8 md:mb-12 text-center px-4">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-black mb-4 bg-gradient-to-b from-white to-slate-500 bg-clip-text text-transparent leading-tight tracking-tight">
+          Inventory <span className="text-blue-500">Control</span> Center
         </h1>
         <p className="text-slate-400 max-w-2xl mx-auto text-lg sm:text-xl leading-relaxed">
           The ultimate dashboard for tracking, managing, and scaling your product catalog.
@@ -173,10 +176,10 @@ export default function Home() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={confirmDelete} className="bg-red-600 hover:bg-red-500">
+            <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+            <Button variant="destructive" onClick={confirmDelete} loading={isDeleting}>
               Delete Product
-            </AlertDialogAction>
+            </Button>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

@@ -14,7 +14,7 @@ export default function ProductCard({ product, onDelete }: ProductCardProps) {
   return (
     <div className="group relative bg-slate-900 border border-white/5 rounded-3xl overflow-hidden hover:border-blue-500/30 transition-all duration-500 hover:-translate-y-2 shadow-xl shadow-black/20 flex flex-col">
       {/* Image Container */}
-      <div className="aspect-square overflow-hidden bg-slate-800 relative shrink-0">
+      <div className="aspect-[4/3] overflow-hidden bg-slate-800 relative shrink-0">
         <img
           src={product.thumbnail || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&q=80'}
           alt={product.title}
@@ -31,20 +31,20 @@ export default function ProductCard({ product, onDelete }: ProductCardProps) {
       </div>
 
       {/* Content */}
-      <div className="p-5 sm:p-6 flex flex-col flex-1">
-        <div className="mb-4">
-          <h3 className="text-xl font-bold text-white line-clamp-1 mb-1 group-hover:text-blue-400 transition-colors capitalize">
+      <div className="p-4 sm:p-5 flex flex-col flex-1">
+        <div className="mb-3">
+          <h3 className="text-lg font-bold text-white line-clamp-1 mb-1 group-hover:text-blue-400 transition-colors capitalize">
             {product.title}
           </h3>
-          <p className="text-slate-400 text-sm line-clamp-2 min-h-[2.5rem] leading-relaxed first-letter:uppercase">
+          <p className="text-slate-400 text-sm line-clamp-2 min-h-[2rem] leading-relaxed first-letter:uppercase">
             {product.description}
           </p>
         </div>
 
-        <div className="flex justify-between items-end mb-6 mt-auto">
+        <div className="flex justify-between items-end mb-4 mt-auto">
           <div className="flex flex-col">
-            <span className="text-xs text-slate-500 font-bold uppercase tracking-tighter">Price</span>
-            <span className="text-2xl font-black text-white">${product.price}</span>
+            <span className="text-[10px] text-slate-500 font-bold uppercase tracking-tighter">Price</span>
+            <span className="text-xl font-black text-white">${product.price}</span>
           </div>
           <div className="text-[10px] text-slate-500 font-mono">
             {new Date(product.createdAt).toLocaleDateString()}
