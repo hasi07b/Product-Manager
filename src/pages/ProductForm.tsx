@@ -110,6 +110,16 @@ export default function ProductForm() {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        toast({
+          title: "File Too Large",
+          description: "Image size must be less than 5MB.",
+          variant: "destructive",
+        });
+        // reset input
+        e.target.value = '';
+        return;
+      }
       const reader = new FileReader();
       reader.onloadend = () => {
         const base64String = reader.result as string;
@@ -122,15 +132,21 @@ export default function ProductForm() {
 
   const onSubmit = async (data: ProductFormData) => {
     try {
+      const formattedData = {
+        ...data,
+        title: data.title.replace(/\b\w/g, c => c.toUpperCase()),
+        description: data.description.charAt(0).toUpperCase() + data.description.slice(1)
+      };
+
       if (isEditMode && id) {
-        await updateProduct(id, data);
+        await updateProduct(id, formattedData);
         toast({
           title: "Success",
           description: "Product updated successfully!",
           variant: "success",
         });
       } else {
-        await addProduct(data);
+        await addProduct(formattedData);
         toast({
           title: "Success",
           description: "Product created successfully!",
@@ -138,10 +154,10 @@ export default function ProductForm() {
         });
       }
       navigate('/');
-    } catch (err) {
+    } catch (err: any) {
       toast({
         title: "Error",
-        description: "Failed to save product. Please try again.",
+        description: err.response?.data?.message || "Failed to save product. Please try again.",
         variant: "destructive",
       });
     }

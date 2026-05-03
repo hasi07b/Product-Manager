@@ -11,7 +11,12 @@ import { Toaster } from './components/ui/Toaster';
 // Simple wrapper to protect routes
 const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
   const { isAuthenticated } = useProducts();
-  return isAuthenticated ? <>{children}</> : <Navigate to="/login" />;
+  return isAuthenticated ? <>{children}</> : <Navigate to="/register" />;
+};
+
+const AuthRoute = ({ children }: { children: React.ReactNode }) => {
+  const { isAuthenticated } = useProducts();
+  return isAuthenticated ? <Navigate to="/" /> : <>{children}</>;
 };
 
 function App() {
@@ -21,10 +26,10 @@ function App() {
       <Toaster />
       <main className="container mx-auto px-4 py-8">
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/product/:id" element={<ProductDetails />} />
+          <Route path="/" element={<PrivateRoute><Home /></PrivateRoute>} />
+          <Route path="/login" element={<AuthRoute><Login /></AuthRoute>} />
+          <Route path="/register" element={<AuthRoute><Register /></AuthRoute>} />
+          <Route path="/product/:id" element={<PrivateRoute><ProductDetails /></PrivateRoute>} />
           
           {/* Protected Routes */}
           <Route 

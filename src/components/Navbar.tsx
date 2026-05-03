@@ -93,7 +93,7 @@ export default function Navbar() {
               <div className="flex items-center gap-3 pl-4 border-l border-white/10">
                 <div className="hidden md:flex flex-col items-end">
                   <span className="text-xs text-slate-400">Welcome,</span>
-                  <span className="text-sm font-semibold text-white">{user?.name}</span>
+                  <span className="text-sm font-semibold text-white capitalize">{user?.name}</span>
                 </div>
                 <button
                   onClick={() => setIsLogoutModalOpen(true)}

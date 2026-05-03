@@ -76,11 +76,7 @@ export const ProductProvider: React.FC<{ children: ReactNode }> = ({ children })
     setLoading(true);
     setError(null);
     try {
-      const response = await authApi.register(userData);
-      const { token, user } = response.data;
-      localStorage.setItem('token', token);
-      localStorage.setItem('user', JSON.stringify(user));
-      setUser(user);
+      await authApi.register(userData);
     } catch (err: any) {
       setError(err.response?.data?.message || 'Registration failed');
       throw err;

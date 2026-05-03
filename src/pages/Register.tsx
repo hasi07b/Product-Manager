@@ -38,10 +38,10 @@ const Register = () => {
       });
       toast({
         title: "Account Created",
-        description: "Your account has been successfully created!",
+        description: "Your account has been successfully created! Please log in.",
         variant: "success",
       });
-      navigate('/');
+      navigate('/login');
     } catch (err: any) {
       toast({
         title: "Registration Failed",
